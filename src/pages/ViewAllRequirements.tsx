@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react"
 import type { ColumnFiltersState } from "@tanstack/react-table"
-import { useRequirements } from "@/hooks/useRequirements"
+import { useRequirements } from "@/hooks/use-requirements"
 import { RequirementsFilter } from "@/components/RequirementsFilter"
 import { RequirementsTable } from "@/components/RequirementsTable"
 import { Skeleton } from "@/components/ui/skeleton"

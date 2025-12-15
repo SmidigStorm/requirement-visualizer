@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
 import {
   fetchDomains,
@@ -6,7 +6,7 @@ import {
   fetchCapabilities,
   fetchRequirements,
 } from "@/lib/airtable"
-import type { RequirementWithHierarchy, Domain, Subdomain, Capability } from "@/types/airtable"
+import { resolveHierarchy } from "@/lib/hierarchy"
 
 export function useRequirements() {
   const domainsQuery = useQuery({
@@ -52,40 +52,9 @@ export function useRequirements() {
   const capabilities = capabilitiesQuery.data || []
   const requirements = requirementsQuery.data || []
 
-  // Build lookup maps for hierarchy resolution (memoized)
-  const domainMap = useMemo(
-    () => new Map<string, Domain>(domains.map((d) => [d.id, d])),
-    [domains]
-  )
-
-  const subdomainMap = useMemo(
-    () => new Map<string, Subdomain>(subdomains.map((s) => [s.id, s])),
-    [subdomains]
-  )
-
-  const capabilityMap = useMemo(
-    () => new Map<string, Capability>(capabilities.map((c) => [c.id, c])),
-    [capabilities]
-  )
-
-  // Resolve hierarchy for each requirement (memoized)
-  const requirementsWithHierarchy: RequirementWithHierarchy[] = useMemo(
-    () =>
-      requirements.map((req) => {
-        const capability = capabilityMap.get(req.capabilityId)
-        const subdomain = capability ? subdomainMap.get(capability.subdomainId) : undefined
-        const domain = subdomain ? domainMap.get(subdomain.domainId) : undefined
-
-        return {
-          ...req,
-          capabilityName: capability?.name || "Unknown",
-          subdomainId: subdomain?.id || "",
-          subdomainName: subdomain?.name || "Unknown",
-          domainId: domain?.id || "",
-          domainName: domain?.name || "Unknown",
-        }
-      }),
-    [requirements, capabilityMap, subdomainMap, domainMap]
+  const requirementsWithHierarchy = React.useMemo(
+    () => resolveHierarchy(requirements, domains, subdomains, capabilities),
+    [requirements, domains, subdomains, capabilities]
   )
 
   return {
