@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     test: {
-      include: ["tests/**/*.test.ts"],
+      include: ["tests/unit/**/*.test.ts", "tests/integration/**/*.test.ts"],
       environment: "node",
       env: {
         VITE_AIRTABLE_API_TOKEN: env.VITE_AIRTABLE_API_TOKEN,

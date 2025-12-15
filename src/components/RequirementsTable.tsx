@@ -84,7 +84,7 @@ export function RequirementsTable({
   })
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border" data-testid="requirements-table">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -115,7 +115,11 @@ export function RequirementsTable({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
+              <TableCell
+                colSpan={columns.length}
+                className="h-24 text-center"
+                data-testid="empty-message"
+              >
                 No requirements found
               </TableCell>
             </TableRow>

@@ -28,6 +28,11 @@ export function ViewAllRequirements() {
     })
   }, [])
 
+  // Clear all filters
+  const clearAllFilters = useCallback(() => {
+    setColumnFilters([])
+  }, [])
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -71,6 +76,7 @@ export function ViewAllRequirements() {
         onDomainsChange={(value) => updateFilter("domainName", value)}
         onSubdomainsChange={(value) => updateFilter("subdomainName", value)}
         onCapabilitiesChange={(value) => updateFilter("capabilityName", value)}
+        onClearAll={clearAllFilters}
       />
       <RequirementsTable
         data={data}

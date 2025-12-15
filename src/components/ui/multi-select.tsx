@@ -29,6 +29,7 @@ interface MultiSelectProps {
   placeholder?: string
   emptyMessage?: string
   className?: string
+  "data-testid"?: string
 }
 
 export function MultiSelect({
@@ -38,6 +39,7 @@ export function MultiSelect({
   placeholder = "Select...",
   emptyMessage = "No options found.",
   className,
+  "data-testid": testId,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false)
 
@@ -64,6 +66,7 @@ export function MultiSelect({
           role="combobox"
           aria-expanded={open}
           className={cn("w-full justify-between", className)}
+          data-testid={testId}
         >
           <div className="flex flex-wrap gap-1 flex-1">
             {hasSelection ? (
