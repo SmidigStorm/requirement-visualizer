@@ -34,6 +34,36 @@ const FONT_CONFIG = {
   [DEPTH.CAPABILITY]: { size: "10px", weight: "400" },
 } as const
 
+// Completion color thresholds and colors
+const COLORS = {
+  THRESHOLDS: { LOW: 33, HIGH: 66 },
+  BACKGROUND: {
+    EMPTY: "#94a3b8", // gray
+    LOW: "#ef4444", // red
+    MEDIUM: "#eab308", // yellow
+    HIGH: "#22c55e", // green
+  },
+  TEXT: {
+    DARK: "#1e293b",
+    LIGHT: "#ffffff",
+  },
+} as const
+
+// Get background color based on completion percentage
+export function getCompletionColor(percentage: number, total: number): string {
+  if (total === 0) return COLORS.BACKGROUND.EMPTY
+  if (percentage <= COLORS.THRESHOLDS.LOW) return COLORS.BACKGROUND.LOW
+  if (percentage <= COLORS.THRESHOLDS.HIGH) return COLORS.BACKGROUND.MEDIUM
+  return COLORS.BACKGROUND.HIGH
+}
+
+// Get text color for readability on completion background
+export function getTextColor(percentage: number, total: number): string {
+  if (total === 0) return COLORS.TEXT.DARK
+  if (percentage <= COLORS.THRESHOLDS.LOW) return COLORS.TEXT.LIGHT
+  return COLORS.TEXT.DARK
+}
+
 interface UseTreemapOptions {
   data: TreemapNode | null
   width: number
@@ -100,7 +130,7 @@ export function useTreemap({ data, width, height }: UseTreemapOptions) {
         if (d.depth === DEPTH.ROOT) return "transparent"
         if (d.depth === DEPTH.DOMAIN) return colorScale("domain")
         if (d.depth === DEPTH.SUBDOMAIN) return colorScale("subdomain")
-        return colorScale("capability")
+        return getCompletionColor(d.data.percentage, d.data.value)
       })
       .attr("stroke", "#64748b")
       .attr("stroke-width", (d) => (d.depth <= DEPTH.DOMAIN ? 2 : 1))
@@ -128,7 +158,12 @@ export function useTreemap({ data, width, height }: UseTreemapOptions) {
           .attr("y", 14)
           .attr("font-size", fontConfig.size)
           .attr("font-weight", fontConfig.weight)
-          .attr("fill", "#1e293b")
+          .attr(
+            "fill",
+            d.depth === DEPTH.CAPABILITY
+              ? getTextColor(nodeData.percentage, nodeData.value)
+              : COLORS.TEXT.DARK
+          )
           .text(() => {
             const maxChars = Math.floor(nodeWidth / TEXT.AVG_CHAR_WIDTH)
             if (nodeData.name.length > maxChars) {
@@ -144,7 +179,7 @@ export function useTreemap({ data, width, height }: UseTreemapOptions) {
             .attr("x", TEXT.PADDING_X)
             .attr("y", nodeHeight - 6)
             .attr("font-size", "9px")
-            .attr("fill", "#475569")
+            .attr("fill", getTextColor(nodeData.percentage, nodeData.value))
             .text(
               `${nodeData.implemented}/${nodeData.value} (${nodeData.percentage}%)`
             )

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest"
 import { buildTreemapHierarchy, type TreemapNode } from "@/lib/treemap"
+import { getCompletionColor, getTextColor } from "@/hooks/use-treemap"
 import type { RequirementWithHierarchy } from "@/types/airtable"
 
 const createRequirement = (
@@ -227,5 +228,56 @@ describe("buildTreemapHierarchy", () => {
     const result = buildTreemapHierarchy([])
 
     expect(result.percentage).toBe(0)
+  })
+})
+
+describe("getCompletionColor", () => {
+  it("returns gray for empty capability (0 total)", () => {
+    expect(getCompletionColor(0, 0)).toBe("#94a3b8")
+  })
+
+  it("returns red for 0% completion", () => {
+    expect(getCompletionColor(0, 10)).toBe("#ef4444")
+  })
+
+  it("returns red for 33% completion (boundary)", () => {
+    expect(getCompletionColor(33, 100)).toBe("#ef4444")
+  })
+
+  it("returns yellow for 34% completion (boundary)", () => {
+    expect(getCompletionColor(34, 100)).toBe("#eab308")
+  })
+
+  it("returns yellow for 66% completion", () => {
+    expect(getCompletionColor(66, 100)).toBe("#eab308")
+  })
+
+  it("returns green for 67% completion (boundary)", () => {
+    expect(getCompletionColor(67, 100)).toBe("#22c55e")
+  })
+
+  it("returns green for 100% completion", () => {
+    expect(getCompletionColor(100, 100)).toBe("#22c55e")
+  })
+})
+
+describe("getTextColor", () => {
+  it("returns dark text for empty capability", () => {
+    expect(getTextColor(0, 0)).toBe("#1e293b")
+  })
+
+  it("returns light (white) text for red background (low completion)", () => {
+    expect(getTextColor(0, 10)).toBe("#ffffff")
+    expect(getTextColor(33, 100)).toBe("#ffffff")
+  })
+
+  it("returns dark text for yellow background (medium completion)", () => {
+    expect(getTextColor(34, 100)).toBe("#1e293b")
+    expect(getTextColor(66, 100)).toBe("#1e293b")
+  })
+
+  it("returns dark text for green background (high completion)", () => {
+    expect(getTextColor(67, 100)).toBe("#1e293b")
+    expect(getTextColor(100, 100)).toBe("#1e293b")
   })
 })
