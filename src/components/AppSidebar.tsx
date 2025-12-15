@@ -1,4 +1,5 @@
-import { List } from "lucide-react"
+import { Link, useLocation } from "react-router-dom"
+import { List, BarChart3 } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -14,10 +15,18 @@ const menuItems = [
   {
     title: "View All Requirements",
     icon: List,
+    path: "/",
+  },
+  {
+    title: "View Completeness",
+    icon: BarChart3,
+    path: "/completeness",
   },
 ]
 
 export function AppSidebar() {
+  const location = useLocation()
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -27,9 +36,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton isActive>
-                    <item.icon />
-                    <span>{item.title}</span>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.pathname === item.path}
+                  >
+                    <Link to={item.path}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

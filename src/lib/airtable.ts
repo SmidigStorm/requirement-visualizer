@@ -59,7 +59,7 @@ export async function fetchDomains(): Promise<Domain[]> {
 interface SubdomainFields {
   Name: string
   Description?: string
-  Prefix: string
+  Prefix?: string
   Domain?: string[]
 }
 
@@ -77,7 +77,7 @@ export async function fetchSubdomains(): Promise<Subdomain[]> {
 interface CapabilityFields {
   Name: string
   Description?: string
-  Prefix: string
+  Prefix?: string
   Subdomain?: string[]
 }
 
@@ -96,9 +96,24 @@ interface RequirementFields {
   ReqID: string
   Title: string
   Description?: string
-  Status?: RequirementStatus
+  Status?: string
   Priority?: RequirementPriority
   Capability?: string[]
+}
+
+// Map Norwegian status values to English
+const STATUS_MAP: Record<string, RequirementStatus> = {
+  "Utkast": "Draft",
+  "Klar for gjennomgang": "Review",
+  "Godkjent": "Approved",
+  "Under implementering": "Implementing",
+  "Implementert": "Done",
+  "Testet": "Tested",
+}
+
+function mapStatus(status: string | undefined): RequirementStatus {
+  if (!status) return "Draft"
+  return STATUS_MAP[status] || "Draft"
 }
 
 export async function fetchRequirements(): Promise<Requirement[]> {
@@ -108,8 +123,8 @@ export async function fetchRequirements(): Promise<Requirement[]> {
     reqId: record.fields.ReqID || "",
     title: record.fields.Title || "",
     description: record.fields.Description,
-    status: record.fields.Status || "Draft",
-    priority: record.fields.Priority || "Could",
+    status: mapStatus(record.fields.Status),
+    priority: record.fields.Priority || "Could have",
     capabilityId: record.fields.Capability?.[0] || "",
   }))
 }

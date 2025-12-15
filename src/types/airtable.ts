@@ -28,13 +28,13 @@ export type RequirementStatus =
   | "Approved"
   | "Implementing"
   | "Done"
-  | "Deprecated"
+  | "Tested"
 
 export type RequirementPriority =
-  | "Must"
-  | "Should"
-  | "Could"
-  | "Wont"
+  | "Must have"
+  | "Should have"
+  | "Could have"
+  | "Won't have"
 
 export interface Requirement {
   id: string
