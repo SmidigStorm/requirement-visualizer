@@ -46,7 +46,11 @@ export class RequirementsPage extends BasePage {
   async selectFilter(filterType: FilterType, optionName: string) {
     const filter = this.filterLocators[filterType]()
     await filter.click()
-    await this.page.getByRole("option", { name: optionName }).click()
+    // Wait for popover to open, then find the CommandItem with matching text
+    // CommandItem uses data-value attribute with the label
+    await this.page.locator(`[data-value="${optionName}"]`).click()
+    // Wait for table to update after filter selection
+    await this.page.waitForLoadState("networkidle")
   }
 
   async clearAllFilters() {

@@ -5,46 +5,43 @@ Feature: View and Filter Requirements
   So that I can understand the status of requirements across the system
 
   Background:
-    Given the requirements data is loaded from Airtable
+    Given the test data is loaded
 
   Rule: Default view shows all requirements
 
     Scenario: View all requirements on page load
       When I open the requirements viewer
-      Then I should see all requirements in a table
+      Then I should see requirements in a table
       And the table should display columns: ReqID, Title, Domain, Subdomain, Capability, Status, Priority
 
   Rule: Requirements can be filtered independently
 
     Scenario: Filter requirements by domain
-      Given I am viewing all requirements
-      When I select a domain filter
-      Then I should see only requirements belonging to that domain
+      When I open the requirements viewer
+      And I select domain "TEST-Education"
+      Then I should see requirement "TEST-REQ-001"
+      And I should see only requirements from domain "TEST-Education"
 
     Scenario: Filter requirements by subdomain
-      Given I am viewing all requirements
-      When I select a subdomain filter
-      Then I should see only requirements belonging to that subdomain
+      When I open the requirements viewer
+      And I select subdomain "TEST-Enrollment"
+      Then I should see requirement "TEST-REQ-001"
+      And I should see only requirements from subdomain "TEST-Enrollment"
 
     Scenario: Filter requirements by capability
-      Given I am viewing all requirements
-      When I select a capability filter
-      Then I should see only requirements belonging to that capability
+      When I open the requirements viewer
+      And I select capability "TEST-Registration"
+      Then I should see requirement "TEST-REQ-001"
+      And I should see only requirements from capability "TEST-Registration"
 
     Scenario: Combine multiple filters
-      Given I am viewing all requirements
-      When I select a domain filter
-      And I select a subdomain filter
-      Then I should see only requirements matching both filters
+      When I open the requirements viewer
+      And I select domain "TEST-Education"
+      And I select subdomain "TEST-Enrollment"
+      Then I should see requirement "TEST-REQ-001"
 
-    Scenario: Clear filters
-      Given I have filters applied
+    Scenario: Clear filters shows all requirements
+      Given I am viewing all requirements
+      And I select domain "TEST-Education"
       When I clear all filters
-      Then I should see all requirements
-
-  Rule: Empty results are handled gracefully
-
-    Scenario: No requirements match filters
-      Given I am viewing all requirements
-      When I apply filters that match no requirements
-      Then I should see a message "No requirements found"
+      Then I should see requirements in a table

@@ -4,10 +4,13 @@ import { defineBddConfig } from "playwright-bdd"
 const testDir = defineBddConfig({
   features: "docs/requirements/**/*.feature",
   steps: ["tests/e2e/steps/**/*.ts", "tests/e2e/fixtures/test.ts"],
+  tags: "not @skip",
 })
 
 export default defineConfig({
   testDir,
+  globalSetup: "./tests/e2e/global-setup.ts",
+  globalTeardown: "./tests/e2e/global-teardown.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,

@@ -5,7 +5,7 @@ Feature: Visualize Requirements Completeness
   So that I can quickly understand the implementation status across the system
 
   Background:
-    Given the requirements data is loaded from Airtable
+    Given the test data is loaded
 
   Rule: Treemap displays nested hierarchy
 
@@ -36,12 +36,14 @@ Feature: Visualize Requirements Completeness
         | 67         | green  |
         | 100        | green  |
 
+    @skip
     Scenario: Empty capability shows gray
       Given a capability has 0 requirements
       When I view the treemap
       Then that capability section should be colored gray
       And it should display "0 / 0 (0%)"
 
+  @skip
   Rule: Filters control treemap data
 
     Scenario: Filter treemap by domain

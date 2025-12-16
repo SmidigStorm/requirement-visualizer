@@ -8,4 +8,8 @@ export const SELECTORS = {
   // Table
   requirementsTable: "requirements-table",
   emptyMessage: "empty-message",
+
+  // Treemap
+  treemapContainer: "treemap-container",
+  treemapSvg: "treemap-svg",
 } as const

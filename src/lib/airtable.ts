@@ -28,18 +28,31 @@ interface AirtableResponse<T> {
 }
 
 async function fetchTable<T>(tableName: string): Promise<AirtableRecord<T>[]> {
-  const response = await fetch(`${BASE_URL}/${tableName}`, {
-    headers: {
-      Authorization: `Bearer ${API_TOKEN}`,
-    },
-  })
+  const allRecords: AirtableRecord<T>[] = []
+  let offset: string | undefined
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${tableName}: ${response.statusText}`)
-  }
+  do {
+    const url = new URL(`${BASE_URL}/${tableName}`)
+    if (offset) {
+      url.searchParams.set("offset", offset)
+    }
 
-  const data: AirtableResponse<T> = await response.json()
-  return data.records
+    const response = await fetch(url.toString(), {
+      headers: {
+        Authorization: `Bearer ${API_TOKEN}`,
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${tableName}: ${response.statusText}`)
+    }
+
+    const data: AirtableResponse<T> & { offset?: string } = await response.json()
+    allRecords.push(...data.records)
+    offset = data.offset
+  } while (offset)
+
+  return allRecords
 }
 
 interface DomainFields {
